@@ -232,6 +232,84 @@ Git::Jump follows the XDG Base Directory Specification:
 - **Data**: `$XDG_DATA_HOME/git-jump/branches.db` (defaults to `~/.local/share/git-jump/branches.db`)
 - **Cache**: `$XDG_CACHE_HOME/git-jump/` (defaults to `~/.cache/git-jump/`)
 
+## Usage Examples
+
+### Typical Workflow
+
+```bash
+# First time setup
+git-jump setup
+
+# In your project directory
+cd ~/code/my-project
+git-jump install
+
+# Work on different branches
+git checkout feature/authentication
+git checkout feature/api
+git checkout feature/ui
+
+# List your tracked branches
+git-jump list
+# Output:
+# Tracked Branches
+# ────────────────
+# ┌─────┬─────────────────────────┬──────────────┐
+# │ #   │ Branch                  │ Last Visited │
+# ├─────┼─────────────────────────┼──────────────┤
+# │ → 1 │ feature/ui              │ just now     │
+# │   2 │ feature/api             │ 5 minutes ago│
+# │   3 │ feature/authentication  │ 10 minutes ago│
+# └─────┴─────────────────────────┴──────────────┘
+
+# Jump to the next branch (feature/api)
+git-jump jump
+
+# Jump to a specific branch by index
+git-jump jump 3  # Switches to feature/authentication
+
+# Clean up old feature branches (keeps main/master/develop/staging)
+git-jump clear
+```
+
+### Working Across Multiple Projects
+
+Git::Jump tracks branches per project, so you can use it across all your repositories:
+
+```bash
+# Project A
+cd ~/code/project-a
+git-jump install
+git checkout feature/new-ui
+git checkout feature/refactor
+
+# Project B
+cd ~/code/project-b
+git-jump install
+git checkout bugfix/login
+git checkout feature/dashboard
+
+# Each project maintains its own branch history
+cd ~/code/project-a
+git-jump list  # Shows only project-a branches
+
+cd ~/code/project-b
+git-jump list  # Shows only project-b branches
+```
+
+### Using Custom Configuration
+
+```bash
+# Use a custom config file
+git-jump --config ~/my-custom-config.toml status
+
+# Run commands quietly (no output)
+git-jump -q jump
+
+# Verbose output for debugging
+git-jump -v add feature/new-feature
+```
+
 ## How It Works
 
 Git::Jump tracks your branch history in a SQLite database. Each time you check out a branch (with the hook installed) or manually add a branch, it's recorded in the database with:
@@ -244,6 +322,10 @@ Git::Jump tracks your branch history in a SQLite database. Each time you check o
 Branches are automatically reordered based on when they were last visited, so the most recently used branches appear at the top of the list. This makes it easy to jump between branches you're actively working on.
 
 When you run `git-jump jump`, it checks out the next branch in the list (or the branch at the specified index) and updates the last visited timestamp, moving it to the top of the list.
+
+### Post-Checkout Hook
+
+When you run `git-jump install`, it creates a post-checkout hook in `.git/hooks/post-checkout` that automatically tracks branches when you check them out using `git checkout`. The hook is safe and will not interfere with existing hooks if you chain them properly.
 
 ## Development
 
