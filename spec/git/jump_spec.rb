@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Git::Jump do
-  it "has a version number" do
-    expect(Git::Jump::VERSION).not_to be nil
-  end
+require "spec_helper"
 
-  it "does something useful" do
-    expect(false).to eq(true)
+RSpec.describe GitJump do
+  it "has a version number" do
+    expect(GitJump::VERSION).not_to be nil
   end
 end

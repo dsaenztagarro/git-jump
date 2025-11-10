@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require "git/jump"
+require "git_jump"
+require "tempfile"
+require "tmpdir"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

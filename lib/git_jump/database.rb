@@ -55,7 +55,7 @@ module GitJump
 
       return project if project
 
-      now = Time.now.iso8601
+      now = Time.now.iso8601(3)
       db.execute(
         "INSERT INTO projects (path, basename, created_at, updated_at) VALUES (?, ?, ?, ?)",
         [path, basename, now, now]
@@ -65,7 +65,7 @@ module GitJump
     end
 
     def add_branch(project_id, branch_name)
-      now = Time.now.iso8601
+      now = Time.now.iso8601(3)
 
       # Try to insert, if already exists, update last_visited_at
       db.execute(
