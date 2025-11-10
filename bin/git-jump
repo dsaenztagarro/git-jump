@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require 'sqlite3'
+require 'fileutils'
+
+if __FILE__ == $PROGRAM_NAME
+  command = ARGV.shift
+  git_jump = GitJump::Action.new
+
+  case command
+  when 'add'
+    branch_name = ARGV.shift
+    if branch_name.nil? || branch_name.strip.empty?
+      puts 'Error: Please provide a branch name.'
+      exit 1
+    end
+    git_jump.add(branch_name)
+  when 'toggle'
+    git_jump.toggle
+  else
+    puts "Unknown command: #{command}"
+    exit 1
+  end
+end
+

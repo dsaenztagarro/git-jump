@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/git/jump/version"
+require_relative "lib/git_jump/version"
 
 Gem::Specification.new do |spec|
   spec.name = "git-jump"
-  spec.version = Git::Jump::VERSION
+  spec.version = GitJump::VERSION
   spec.authors = ["David Sáenz"]
   spec.email = ["dsaenz@bebanjo.com"]
 
@@ -37,4 +37,10 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+
+  spec.add_development_dependency "rake", "~> 13.3.0"
+  spec.add_development_dependency "rspec", "~> 3.13.1"
+  spec.add_development_dependency "rubocop", "~> 1.81.1"
+  spec.add_development_dependency "rubocop-rspec", "~> 3.7.0"
+  spec.add_development_dependency "ruby-lsp", "~> 0.26.1"
 end
