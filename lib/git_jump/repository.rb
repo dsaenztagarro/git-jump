@@ -43,10 +43,15 @@ module GitJump
     end
 
     def checkout(branch_name)
+      # Set environment variable to skip git-jump hook during checkout
+      # This prevents double-loading of gems when git-jump triggers checkout
+      ENV["GIT_JUMP_SKIP_HOOK"] = "1"
       execute_git("checkout", branch_name)
       true
     rescue StandardError => e
       raise "Failed to checkout branch '#{branch_name}': #{e.message}"
+    ensure
+      ENV.delete("GIT_JUMP_SKIP_HOOK")
     end
 
     def branch_exists?(branch_name)

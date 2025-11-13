@@ -15,6 +15,11 @@ module GitJump
         NEW_HEAD=$2
         BRANCH_CHECKOUT=$3
 
+        # Skip if called from git-jump itself to avoid double-loading
+        if [ -n "$GIT_JUMP_SKIP_HOOK" ]; then
+            exit 0
+        fi
+
         # Only run on branch checkouts (not file checkouts)
         if [ "$BRANCH_CHECKOUT" = "1" ]; then
             RUBY_PATH="$(which ruby)"
