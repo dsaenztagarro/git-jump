@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "pastel"
-require "tty-table"
 
 module GitJump
   module Utils
@@ -44,6 +43,7 @@ module GitJump
       def table(headers, rows)
         return if quiet
 
+        require "tty-table" unless defined?(TTY::Table)
         tty_table = TTY::Table.new(headers, rows)
         puts tty_table.render(:unicode, padding: [0, 1])
       end
