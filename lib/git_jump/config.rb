@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "toml-rb"
-
 module GitJump
   # Manages configuration from TOML file
   class Config
@@ -86,6 +84,7 @@ module GitJump
     def load_config
       return DEFAULT_CONFIG unless File.exist?(@path)
 
+      require "toml-rb" unless defined?(TomlRB)
       TomlRB.load_file(@path)
     rescue StandardError => e
       warn "Error loading config file: #{e.message}"
