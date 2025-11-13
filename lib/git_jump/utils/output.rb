@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
-require "pastel"
-
 module GitJump
   module Utils
     # Handles formatted console output with colors and tables
     class Output
-      attr_reader :pastel, :quiet, :verbose
+      attr_reader :quiet, :verbose
 
       def initialize(quiet: false, verbose: false)
-        @pastel = Pastel.new
         @quiet = quiet
         @verbose = verbose
+      end
+
+      def pastel
+        @pastel ||= begin
+          require "pastel" unless defined?(Pastel)
+          Pastel.new
+        end
       end
 
       def success(message)
