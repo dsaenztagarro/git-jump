@@ -1,5 +1,10 @@
 # Git::Jump
 
+[![Gem Version](https://badge.fury.io/rb/git-jump.svg)](https://rubygems.org/gems/git-jump)
+[![CI](https://github.com/dsaenztagarro/git-jump/actions/workflows/main.yml/badge.svg)](https://github.com/dsaenztagarro/git-jump/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Ruby Version](https://img.shields.io/badge/ruby-%3E%3D%203.2-blue)](https://www.ruby-lang.org/)
+
 A CLI tool for tracking and quickly switching between git branches across projects. Git::Jump automatically tracks your branch history and lets you jump between recently visited branches with ease.
 
 ## Features

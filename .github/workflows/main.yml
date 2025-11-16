@@ -1,29 +1,75 @@
-name: Ruby
+name: Ruby Gem
 
 on:
   push:
-    branches:
-      - master
-
+    branches: [ "master" ]
   pull_request:
+    branches: [ "master" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+
     strategy:
       matrix:
-        ruby:
-          - '3.4.3'
+        ruby: [3.2, 3.3, 3.4]
+
+    name: Ruby ${{ matrix.ruby }} tests
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run the default task
-        run: bundle exec rake
+
+      - name: Run tests
+        run: |
+          bundle exec rake
+
+      - name: Display coverage summary
+        if: always()
+        run: |
+          echo "📊 SimpleCov Coverage Report:"
+          if [ -f coverage/.last_run.json ]; then
+            ruby -rjson -e "data=JSON.parse(File.read('coverage/.last_run.json')); puts \"  Line Coverage: #{data['result']['line']}%\"; puts \"  Branch Coverage: #{data['result']['branch']}%\""
+          else
+            echo "  ⚠️  Coverage report not found"
+          fi
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report-ruby-${{ matrix.ruby }}
+          path: coverage/
+          retention-days: 30
+
+      - name: Run RuboCop
+        run: |
+          bundle exec rubocop
+
+      - name: Publish to RubyGems
+        if: matrix.ruby == '3.2' && github.ref_name == 'master'
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem build *.gemspec
+          gem push *.gem
+        env:
+          GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
+
+      - name: Configure Git
+        if: matrix.ruby == '3.2' && github.ref_name == 'master'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Generate release tag
+        if: matrix.ruby == '3.2' && github.ref_name == 'master'
+        run: |
+          bundle exec rake release:tag

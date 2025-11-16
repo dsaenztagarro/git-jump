@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "thor"
+# Lazy-load Thor only when CLI is used
+require "thor" unless defined?(Thor)
 
 module GitJump
   # Command-line interface using Thor
@@ -26,8 +27,9 @@ module GitJump
       You can edit the file after creation to match your preferences.
     DESC
     def setup
+      require_relative "loaders/setup_loader"
       output = create_output
-      action = Actions::Setup.new(
+      action = GitJump::Actions::Setup.new(
         config_path: options[:config],
         output: output
       )
@@ -48,9 +50,10 @@ module GitJump
       Run this command in your git repository root.
     DESC
     def install
-      action = create_action(Actions::Install)
+      require_relative "loaders/install_loader"
+      action = create_action(GitJump::Actions::Install)
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
@@ -66,9 +69,10 @@ module GitJump
     DESC
     option :verify, type: :boolean, default: true, desc: "Verify branch exists"
     def add(branch_name)
-      action = create_action(Actions::Add, branch_name: branch_name, verify: options[:verify])
+      require_relative "loaders/add_loader"
+      action = create_action(GitJump::Actions::Add, branch_name: branch_name, verify: options[:verify])
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
@@ -82,9 +86,10 @@ module GitJump
       the 'jump' command to quickly switch to a specific branch.
     DESC
     def list
-      action = create_action(Actions::List)
+      require_relative "loaders/list_loader"
+      action = create_action(GitJump::Actions::List)
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
@@ -104,9 +109,10 @@ module GitJump
         git-jump jump 3     # Jump to branch at index 3
     DESC
     def jump(index = nil)
-      action = create_action(Actions::Jump, index: index)
+      require_relative "loaders/jump_loader"
+      action = create_action(GitJump::Actions::Jump, index: index)
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
@@ -128,9 +134,10 @@ module GitJump
       You'll be prompted for confirmation before clearing.
     DESC
     def clear
-      action = create_action(Actions::Clear)
+      require_relative "loaders/clear_loader"
+      action = create_action(GitJump::Actions::Clear)
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
@@ -146,21 +153,24 @@ module GitJump
       Useful for debugging or verifying your setup.
     DESC
     def status
-      action = create_action(Actions::Status)
+      require_relative "loaders/status_loader"
+      action = create_action(GitJump::Actions::Status)
       exit(1) unless action.execute
-    rescue Repository::NotAGitRepositoryError => e
+    rescue GitJump::Repository::NotAGitRepositoryError => e
       create_output.error(e.message)
       exit(1)
     end
 
     desc "version", "Show version"
     def version
+      require_relative "version" unless defined?(GitJump::VERSION)
       puts "git-jump #{GitJump::VERSION}"
     end
 
     private
 
     def create_output
+      require_relative "utils/output" unless defined?(Utils::Output)
       Utils::Output.new(
         quiet: options[:quiet] || false,
         verbose: options[:verbose] || false
@@ -168,6 +178,7 @@ module GitJump
     end
 
     def create_action(action_class, **extra_options)
+      # Dependencies are already loaded by action-specific loaders
       output = create_output
       config = Config.new(options[:config])
       repository = Repository.new

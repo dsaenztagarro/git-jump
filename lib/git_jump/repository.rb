@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "English"
 require "fileutils"
 require "shellwords"
 
@@ -108,8 +109,8 @@ module GitJump
     def execute_git(*args)
       Dir.chdir(project_path) do
         cmd = ["git"] + args
-        output = `#{cmd.map { |arg| arg.shellescape }.join(" ")} 2>&1`
-        raise "Git command failed: #{output}" unless $?.success?
+        output = `#{cmd.map(&:shellescape).join(" ")} 2>&1`
+        raise "Git command failed: #{output}" unless $CHILD_STATUS.success?
 
         output
       end

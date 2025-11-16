@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../colors"
+
 module GitJump
   module Utils
     # Handles formatted console output with colors and tables
@@ -11,45 +13,38 @@ module GitJump
         @verbose = verbose
       end
 
-      def pastel
-        @pastel ||= begin
-          require "pastel" unless defined?(Pastel)
-          Pastel.new
-        end
-      end
-
       def success(message)
-        puts pastel.green("✓ #{message}") unless quiet
+        puts Colors.green("✓ #{message}") unless quiet
       end
 
       def error(message)
-        warn pastel.red("✗ #{message}")
+        warn Colors.red("✗ #{message}")
       end
 
       def warning(message)
-        puts pastel.yellow("⚠ #{message}") unless quiet
+        puts Colors.yellow("⚠ #{message}") unless quiet
       end
 
       def info(message)
-        puts pastel.blue("ℹ #{message}") unless quiet
+        puts Colors.blue("ℹ #{message}") unless quiet
       end
 
       def debug(message)
-        puts pastel.dim(message) if verbose
+        puts Colors.dim(message) if verbose
       end
 
       def heading(message)
         puts unless quiet
-        puts pastel.bold.cyan(message) unless quiet
-        puts pastel.dim("─" * message.length) unless quiet
+        puts Colors.cyan(message, bold: true) unless quiet
+        puts Colors.dim("─" * message.length) unless quiet
       end
 
       def table(headers, rows)
         return if quiet
 
-        require "tty-table" unless defined?(TTY::Table)
-        tty_table = TTY::Table.new(headers, rows)
-        puts tty_table.render(:unicode, padding: [0, 1])
+        require "terminal-table" unless defined?(Terminal::Table)
+        table = Terminal::Table.new(headings: headers, rows: rows)
+        puts table
       end
 
       def branch_list(branches, current_branch)
@@ -59,8 +54,8 @@ module GitJump
 
         rows = branches.map.with_index(1) do |branch, index|
           name = branch["name"]
-          marker = name == current_branch ? pastel.green("→") : " "
-          styled_name = name == current_branch ? pastel.bold.green(name) : name
+          marker = name == current_branch ? Colors.green("→") : " "
+          styled_name = name == current_branch ? Colors.green(name, bold: true) : name
           last_visited = format_time(branch["last_visited_at"])
 
           ["#{marker} #{index}", styled_name, last_visited]
@@ -69,10 +64,10 @@ module GitJump
         table(["#", "Branch", "Last Visited"], rows)
       end
 
-      def prompt(message, default: "N")
+      def prompt(message, _default: "N")
         return true if quiet # Auto-confirm in quiet mode
 
-        print pastel.yellow("#{message} [y/N] ")
+        print Colors.yellow("#{message} [y/N] ")
         answer = $stdin.gets&.chomp&.downcase
         %w[y yes].include?(answer)
       end

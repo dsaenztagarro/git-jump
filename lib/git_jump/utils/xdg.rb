@@ -9,15 +9,15 @@ module GitJump
     module XDG
       class << self
         def config_home
-          ENV.fetch("XDG_CONFIG_HOME", File.join(ENV.fetch("HOME"), ".config"))
+          ENV.fetch("XDG_CONFIG_HOME", File.join(Dir.home, ".config"))
         end
 
         def data_home
-          ENV.fetch("XDG_DATA_HOME", File.join(ENV.fetch("HOME"), ".local", "share"))
+          ENV.fetch("XDG_DATA_HOME", File.join(Dir.home, ".local", "share"))
         end
 
         def cache_home
-          ENV.fetch("XDG_CACHE_HOME", File.join(ENV.fetch("HOME"), ".cache"))
+          ENV.fetch("XDG_CACHE_HOME", File.join(Dir.home, ".cache"))
         end
 
         def config_path(custom_path = nil)

@@ -22,6 +22,14 @@ module GitJump
       @data = load_config
     end
 
+    # Cache the config instance per path to avoid reloading
+    @instances = {}
+
+    def self.instance(path = nil)
+      normalized_path = Utils::XDG.config_path(path)
+      @instances[normalized_path] ||= new(path)
+    end
+
     def self.default_config_content
       <<~TOML
         [database]
@@ -84,8 +92,9 @@ module GitJump
     def load_config
       return DEFAULT_CONFIG unless File.exist?(@path)
 
-      require "toml-rb" unless defined?(TomlRB)
-      TomlRB.load_file(@path)
+      require_relative "utils/config_cache" unless defined?(Utils::ConfigCache)
+      cache = Utils::ConfigCache.new(@path)
+      cache.load
     rescue StandardError => e
       warn "Error loading config file: #{e.message}"
       warn "Using default configuration"

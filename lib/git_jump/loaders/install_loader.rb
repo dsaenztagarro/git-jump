@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+# Loader for install action
+require_relative "../version"
+require_relative "../utils/xdg"
+require_relative "../utils/output"
+require_relative "../config"
+require_relative "../repository"
+require_relative "../actions/base"
+require_relative "../actions/install"

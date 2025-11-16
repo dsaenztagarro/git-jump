@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/dsaenztagarro/git-jump"
   spec.metadata["changelog_uri"] = "https://github.com/dsaenztagarro/git-jump/blob/master/CHANGELOG.md"
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -34,11 +35,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Runtime dependencies
-  spec.add_dependency "pastel", "~> 0.8"
   spec.add_dependency "sqlite3", "~> 1.7"
+  spec.add_dependency "terminal-table", "~> 3.0"
   spec.add_dependency "thor", "~> 1.3"
   spec.add_dependency "toml-rb", "~> 2.2"
-  spec.add_dependency "tty-table", "~> 0.12"
 
   spec.add_development_dependency "rake", "~> 13.3.0"
   spec.add_development_dependency "rspec", "~> 3.13.1"

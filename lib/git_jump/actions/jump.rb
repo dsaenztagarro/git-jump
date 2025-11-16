@@ -8,8 +8,8 @@ module GitJump
     class Jump < Base
       attr_reader :index
 
-      def initialize(index: nil, **options)
-        super(**options)
+      def initialize(index: nil, **)
+        super(**)
         @index = index
       end
 

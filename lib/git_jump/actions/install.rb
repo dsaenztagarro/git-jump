@@ -6,7 +6,7 @@ module GitJump
   module Actions
     # Action to install post-checkout git hook
     class Install < Base
-      HOOK_TEMPLATE = <<~BASH
+      HOOK_TEMPLATE = <<~BASH.freeze
         #!/bin/sh
         # Git Jump post-checkout hook
         # Auto-generated - do not edit manually

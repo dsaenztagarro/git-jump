@@ -1,8 +1,64 @@
 AllCops:
   TargetRubyVersion: 3.2
+  NewCops: enable
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Style/Documentation:
+  Enabled: false
+
+# Increase limits for spec files
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'Rakefile'
+    - '*.gemspec'
+
+# Allow development dependencies in gemspec
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# Relax method length limits
+Metrics/MethodLength:
+  Max: 30
+
+# Relax ABC size limits
+Metrics/AbcSize:
+  Max: 65
+
+# Relax class length limits
+Metrics/ClassLength:
+  Max: 200
+
+# Relax complexity limits for cache validation
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+# Security: Marshal.load is acceptable for our cache use case with proper validation
+Security/MarshalLoad:
+  Exclude:
+    - 'lib/git_jump/utils/config_cache.rb'
+
+# Lint: Float comparison is acceptable for mtime comparison
+Lint/FloatComparison:
+  Exclude:
+    - 'lib/git_jump/utils/config_cache.rb'
+
+# Lint: Duplicate branch is acceptable in error handling
+Lint/DuplicateBranch:
+  Enabled: false
+
+# Naming: execute methods don't need to end with ?
+Naming/PredicateMethod:
+  Enabled: false
+
+# Layout: Allow longer lines for complex test expectations
+Layout/LineLength:
+  Max: 150

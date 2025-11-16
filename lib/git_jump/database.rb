@@ -1,24 +1,32 @@
 # frozen_string_literal: true
 
-require "sqlite3"
 require "fileutils"
 require "time"
 
 module GitJump
   # Handles SQLite database operations for branch tracking
   class Database
-    attr_reader :db_path, :db
+    attr_reader :db_path
 
     def initialize(db_path)
       @db_path = db_path
-      ensure_database_directory!
-      @db = SQLite3::Database.new(db_path)
-      @db.results_as_hash = true
-      migrate!
+      @db = nil
     end
 
-    def migrate!
-      db.execute <<-SQL
+    # Lazy-load database connection
+    def db
+      @db ||= begin
+        require "sqlite3" unless defined?(SQLite3)
+        ensure_database_directory!
+        connection = SQLite3::Database.new(db_path)
+        connection.results_as_hash = true
+        migrate!(connection)
+        connection
+      end
+    end
+
+    def migrate!(connection)
+      connection.execute <<-SQL
         CREATE TABLE IF NOT EXISTS projects (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           path TEXT NOT NULL UNIQUE,
@@ -28,7 +36,7 @@ module GitJump
         );
       SQL
 
-      db.execute <<-SQL
+      connection.execute <<-SQL
         CREATE TABLE IF NOT EXISTS branches (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           project_id INTEGER NOT NULL,
@@ -41,7 +49,7 @@ module GitJump
         );
       SQL
 
-      db.execute <<-SQL
+      connection.execute <<-SQL
         CREATE INDEX IF NOT EXISTS idx_branches_project_position#{" "}
           ON branches(project_id, position);
       SQL
@@ -161,7 +169,7 @@ module GitJump
     end
 
     def close
-      db.close if db
+      db&.close
     end
 
     private

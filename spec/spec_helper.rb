@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require "git_jump"
+
+# Load all components for testing (full library load)
+GitJump.load_all!
+
 require "tempfile"
 require "tmpdir"
 

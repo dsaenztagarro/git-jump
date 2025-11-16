@@ -1,7 +1,9 @@
-require 'sqlite3'
+# frozen_string_literal: true
+
+require "sqlite3"
 
 def setup_database
-  db = SQLite3::Database.new File.join(Dir.home, '.git_jump.sqlite3')
+  db = SQLite3::Database.new File.join(Dir.home, ".git_jump.sqlite3")
 
   db.execute <<-SQL
     CREATE TABLE IF NOT EXISTS branches (
@@ -14,4 +16,3 @@ def setup_database
 
   db
 end
-

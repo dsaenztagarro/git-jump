@@ -8,8 +8,8 @@ module GitJump
     class Add < Base
       attr_reader :branch_name, :verify
 
-      def initialize(branch_name:, verify: true, **options)
-        super(**options)
+      def initialize(branch_name:, verify: true, **)
+        super(**)
         @branch_name = branch_name
         @verify = verify
       end
