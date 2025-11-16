@@ -12,13 +12,20 @@ module GitJump
     def run(argv)
       @global_options = { config: nil, quiet: false, verbose: false }
 
-      if argv.empty?
-        print_help
-        exit(0)
-      end
+      return print_help_and_exit if argv.empty?
 
       command = argv.shift
+      dispatch_command(command, argv)
+    end
 
+    private
+
+    def print_help_and_exit
+      print_help
+      exit(0)
+    end
+
+    def dispatch_command(command, argv)
       case command
       when "setup"
         setup_command(argv)
@@ -39,13 +46,15 @@ module GitJump
       when "help", "-h", "--help"
         print_help
       else
-        warn "Unknown command: #{command}"
-        warn "Run 'git-jump help' for usage information."
-        exit(1)
+        handle_unknown_command(command)
       end
     end
 
-    private
+    def handle_unknown_command(command)
+      warn "Unknown command: #{command}"
+      warn "Run 'git-jump help' for usage information."
+      exit(1)
+    end
 
     def setup_command(argv)
       parse_global_options(argv)
