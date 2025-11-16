@@ -3,16 +3,16 @@
 require "spec_helper"
 
 RSpec.describe GitJump::Actions::Setup do
-  let(:temp_dir) { Dir.mktmpdir }
-  let(:config_path) { File.join(temp_dir, "config.toml") }
-  let(:output) { instance_double(GitJump::Utils::Output) }
-
   subject(:action) do
     described_class.new(
       config_path: config_path,
       output: output
     )
   end
+
+  let(:temp_dir) { Dir.mktmpdir }
+  let(:config_path) { File.join(temp_dir, "config.toml") }
+  let(:output) { instance_double(GitJump::Utils::Output) }
 
   after do
     FileUtils.rm_rf(temp_dir)

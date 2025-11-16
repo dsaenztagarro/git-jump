@@ -1,3 +1,6 @@
+plugins:
+  - rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 3.2
   NewCops: enable
@@ -66,3 +69,27 @@ Naming/PredicateMethod:
 # Layout: Allow longer lines for complex test expectations
 Layout/LineLength:
   Max: 150
+
+# RSpec: Disable message spies - allow receive() syntax
+RSpec/MessageSpies:
+  Enabled: false
+
+# RSpec: Increase memoized helpers limit for complex specs
+RSpec/MultipleMemoizedHelpers:
+  Max: 15
+
+# RSpec: Allow multiple expectations in integration tests
+RSpec/MultipleExpectations:
+  Max: 10
+
+# RSpec: Allow deeper nesting for complex test scenarios
+RSpec/NestedGroups:
+  Max: 5
+
+# RSpec: Allow longer examples for integration tests
+RSpec/ExampleLength:
+  Max: 10
+
+# RSpec: Allow flexible spec file naming
+RSpec/SpecFilePathFormat:
+  Enabled: false

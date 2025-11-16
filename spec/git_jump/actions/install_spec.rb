@@ -3,6 +3,15 @@
 require "spec_helper"
 
 RSpec.describe GitJump::Actions::Install do
+  subject(:action) do
+    described_class.new(
+      config: config,
+      repository: repository,
+      database: database,
+      output: output
+    )
+  end
+
   let(:temp_dir) { Dir.mktmpdir }
   let(:config_path) { File.join(temp_dir, "config.toml") }
   let(:db_path) { File.join(temp_dir, "test.db") }
@@ -27,15 +36,6 @@ RSpec.describe GitJump::Actions::Install do
     )
   end
   let(:output) { instance_double(GitJump::Utils::Output) }
-
-  subject(:action) do
-    described_class.new(
-      config: config,
-      repository: repository,
-      database: database,
-      output: output
-    )
-  end
 
   after do
     FileUtils.rm_rf(temp_dir)

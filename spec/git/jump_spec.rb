@@ -4,6 +4,6 @@ require "spec_helper"
 
 RSpec.describe GitJump do
   it "has a version number" do
-    expect(GitJump::VERSION).not_to be nil
+    expect(GitJump::VERSION).not_to be_nil
   end
 end

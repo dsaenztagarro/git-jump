@@ -3,7 +3,17 @@
 require "spec_helper"
 
 RSpec.describe GitJump::Actions::Jump do
+  subject(:action) do
+    described_class.new(
+      config: config,
+      repository: repository,
+      database: database,
+      output: output
+    )
+  end
+
   let(:temp_dir) { Dir.mktmpdir }
+  let(:project_id) { database.find_or_create_project(repo_path, "test-repo")["id"] }
   let(:config_path) { File.join(temp_dir, "config.toml") }
   let(:db_path) { File.join(temp_dir, "test.db") }
   let(:repo_path) { File.join(temp_dir, "repo") }
@@ -28,17 +38,6 @@ RSpec.describe GitJump::Actions::Jump do
     )
   end
   let(:output) { instance_double(GitJump::Utils::Output) }
-
-  subject(:action) do
-    described_class.new(
-      config: config,
-      repository: repository,
-      database: database,
-      output: output
-    )
-  end
-
-  let(:project_id) { database.find_or_create_project(repo_path, "test-repo")["id"] }
 
   after do
     FileUtils.rm_rf(temp_dir)

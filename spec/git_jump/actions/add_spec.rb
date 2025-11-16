@@ -3,6 +3,16 @@
 require "spec_helper"
 
 RSpec.describe GitJump::Actions::Add do
+  subject(:action) do
+    described_class.new(
+      branch_name: "test-branch",
+      config: config,
+      repository: repository,
+      database: database,
+      output: output
+    )
+  end
+
   let(:temp_dir) { Dir.mktmpdir }
   let(:config_path) { File.join(temp_dir, "config.toml") }
   let(:db_path) { File.join(temp_dir, "test.db") }
@@ -21,16 +31,6 @@ RSpec.describe GitJump::Actions::Add do
   let(:database) { GitJump::Database.new(db_path) }
   let(:repository) { instance_double(GitJump::Repository, project_basename: "test-repo", project_path: repo_path) }
   let(:output) { instance_double(GitJump::Utils::Output) }
-
-  subject(:action) do
-    described_class.new(
-      branch_name: "test-branch",
-      config: config,
-      repository: repository,
-      database: database,
-      output: output
-    )
-  end
 
   before do
     # Create a git repository
