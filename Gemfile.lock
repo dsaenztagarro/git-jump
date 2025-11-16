@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    git-jump (0.1.0)
+    git-jump (0.1.1)
       sqlite3 (~> 1.7)
       terminal-table (~> 3.0)
       toml-rb (~> 2.2)
