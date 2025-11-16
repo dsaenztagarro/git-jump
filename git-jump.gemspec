@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   # Runtime dependencies
   spec.add_dependency "sqlite3", "~> 1.7"
   spec.add_dependency "terminal-table", "~> 3.0"
-  spec.add_dependency "thor", "~> 1.3"
   spec.add_dependency "toml-rb", "~> 2.2"
 
   spec.add_development_dependency "rake", "~> 13.3.0"
