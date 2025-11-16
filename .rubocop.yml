@@ -22,6 +22,10 @@ Metrics/BlockLength:
 Gemspec/DevelopmentDependencies:
   Enabled: false
 
+# Disable MFA requirement for gemspec
+Gemspec/RequireMFA:
+  Enabled: false
+
 # Relax method length limits
 Metrics/MethodLength:
   Max: 30
