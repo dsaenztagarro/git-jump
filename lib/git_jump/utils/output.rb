@@ -50,8 +50,6 @@ module GitJump
       def branch_list(branches, current_branch)
         return if quiet || branches.empty?
 
-        heading("Tracked Branches")
-
         rows = branches.map.with_index(1) do |branch, index|
           name = branch["name"]
           marker = name == current_branch ? Colors.green("→") : " "
