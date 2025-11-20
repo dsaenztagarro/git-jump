@@ -50,13 +50,16 @@ module GitJump
       def branch_list(branches, current_branch)
         return if quiet || branches.empty?
 
+        max_branch_width = calculate_max_branch_width
+
         rows = branches.map.with_index(1) do |branch, index|
           name = branch["name"]
           marker = name == current_branch ? Colors.green("→") : " "
           styled_name = name == current_branch ? Colors.green(name, bold: true) : name
+          truncated_name = truncate_text(styled_name, max_branch_width)
           last_visited = format_time(branch["last_visited_at"])
 
-          ["#{marker} #{index}", styled_name, last_visited]
+          ["#{marker} #{index}", truncated_name, last_visited]
         end
 
         table(["#", "Branch", "Last Visited"], rows)
@@ -90,6 +93,60 @@ module GitJump
         end
       rescue StandardError
         "unknown"
+      end
+
+      # Get terminal width using multiple detection methods
+      def terminal_width
+        # Try tput command
+        width = `tput cols 2>/dev/null`.to_i
+        return width if width.positive?
+
+        # Try COLUMNS environment variable
+        width = ENV.fetch("COLUMNS", 0).to_i
+        return width if width.positive?
+
+        # Default fallback
+        80
+      end
+
+      # Calculate maximum width for branch names in the table
+      # Table structure: | # | Branch | Last Visited |
+      # Fixed widths:
+      #   - '# ' column: ~5 chars (marker + index)
+      #   - 'Last Visited' column: ~14 chars
+      #   - Table borders and padding: ~12 chars
+      def calculate_max_branch_width
+        fixed_width = 5 + 14 + 12
+        branch_width = terminal_width - fixed_width
+
+        # Ensure minimum branch width for readability
+        [branch_width, 20].max
+      end
+
+      # Strip ANSI color codes from text for accurate length calculation
+      def strip_ansi_codes(text)
+        text.gsub(/\e\[[0-9;]*m/, "")
+      end
+
+      # Truncate text to max_width, preserving ANSI color codes
+      def truncate_text(text, max_width)
+        plain_text = strip_ansi_codes(text)
+        return text if plain_text.length <= max_width
+        return "..." if max_width < 3
+
+        # Check if text contains ANSI color codes
+        if text.include?("\e[")
+          # Extract all leading ANSI codes (color, bold, etc.)
+          color_start = text[/^(\e\[[0-9;]*m)+/, 0] || ""
+          color_end = text[/\e\[0m$/] || ""
+
+          # Truncate the plain text and reapply colors
+          truncated = "#{plain_text[0...(max_width - 3)]}..."
+          color_start + truncated + color_end
+        else
+          # No color codes, simple truncation
+          "#{plain_text[0...(max_width - 3)]}..."
+        end
       end
     end
   end

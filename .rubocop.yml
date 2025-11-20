@@ -93,3 +93,7 @@ RSpec/ExampleLength:
 # RSpec: Allow flexible spec file naming
 RSpec/SpecFilePathFormat:
   Enabled: false
+
+# RSpec: Allow stubbing subject methods for testing terminal-dependent behavior
+RSpec/SubjectStub:
+  Enabled: false
