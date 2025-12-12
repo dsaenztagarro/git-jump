@@ -30,7 +30,7 @@ module GitJump
         #{"    "}
             "$RUBY_PATH" -e "
               begin
-                require 'git_jump'
+                require 'git_jump/hooks/post_checkout'
                 GitJump::Hooks::PostCheckout.new('$(pwd)').run
               rescue LoadError
                 # Gem not available, skip silently
