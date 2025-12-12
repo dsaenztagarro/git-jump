@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative "../repository"
+require_relative "../config"
+require_relative "../database"
+
 module GitJump
   module Hooks
     # Post-checkout hook implementation

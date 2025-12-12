@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "utils/xdg"
+
 module GitJump
   # Manages configuration from TOML file
   class Config

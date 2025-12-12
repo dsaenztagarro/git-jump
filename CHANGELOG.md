@@ -1,5 +1,32 @@
 ## [Unreleased]
 
+## [0.1.3] - 2025-12-12
+
+### Fixed
+- Fixed post-checkout hook to work correctly across all projects
+  - Hook now properly requires 'git_jump/hooks/post_checkout' instead of 'git_jump'
+  - Added missing dependency requires to post_checkout.rb (Repository, Config, Database)
+  - Added missing require for Utils::XDG in config.rb
+  - Hook now respects .ruby-version files in repositories
+- Fixed install_loader to include Database dependency
+
+### Added
+- Comprehensive test suite for post-checkout hook (17 tests)
+  - Tests for branch tracking, project creation, error handling
+  - Hook template validation tests
+  - Dependency loading verification tests
+- Added loader tests to ensure all dependencies are properly loaded (6 tests)
+- Added local testing documentation in docs/local-testing.md
+
+### Changed
+- Improved code quality by fixing all RuboCop offenses
+- Extracted helper methods in specs for better maintainability
+
+## [0.1.2] - 2025-11-16
+
+### Fixed
+- Fixed setup action error handling and loader dependencies
+
 ## [0.1.1] - 2025-11-16
 
 ### Changed
