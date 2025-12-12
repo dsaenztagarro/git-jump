@@ -42,30 +42,31 @@ RSpec.describe GitJump::Hooks::PostCheckout do
 
       it "updates branch when run multiple times" do
         hook.run
-        
+
         db = GitJump::Database.new(db_path)
         project = db.find_or_create_project(repo_path, "test-repo")
         count_first = db.count_branches(project["id"])
         db.close
-        
+
         hook.run
-        
+
         db = GitJump::Database.new(db_path)
         count_second = db.count_branches(project["id"])
         db.close
-        
+
         expect(count_second).to eq(count_first)
       end
 
       it "cleans up old branches when max_branches is exceeded" do
-        GitJump::Config.new(config_path)
+        config = GitJump::Config.new(config_path)
         create_excess_branches
 
         hook.run
 
         db = GitJump::Database.new(db_path)
         project = db.find_or_create_project(repo_path, "test-repo")
-        db.list_branches(project["id"])
+        branches = db.list_branches(project["id"])
+        expect(branches.size).to be <= config.max_branches
         db.close
       end
     end
@@ -97,21 +98,9 @@ RSpec.describe GitJump::Hooks::PostCheckout do
 
     context "when branch name is empty" do
       it "does not track the branch" do
-        repository = instance_double(
-          GitJump::Repository,
-          current_branch: "",
-          project_path: repo_path,
-          project_basename: "test-repo"
-        )
-        allow(GitJump::Repository).to receive(:new).and_return(repository)
-
+        setup_empty_branch_stub
         hook.run
-
-        db = GitJump::Database.new(db_path)
-        project = db.find_or_create_project(repo_path, "test-repo")
-        branches = db.list_branches(project["id"])
-        expect(branches).to be_empty
-        db.close
+        expect(branch_count).to eq(0)
       end
     end
 
@@ -224,5 +213,23 @@ RSpec.describe GitJump::Hooks::PostCheckout do
       keep_patterns = ["^main$", "^master$"]
     TOML
     File.write(config_path, config_content)
+  end
+
+  def setup_empty_branch_stub
+    repository = instance_double(
+      GitJump::Repository,
+      current_branch: "",
+      project_path: repo_path,
+      project_basename: "test-repo"
+    )
+    allow(GitJump::Repository).to receive(:new).and_return(repository)
+  end
+
+  def branch_count
+    db = GitJump::Database.new(db_path)
+    project = db.find_or_create_project(repo_path, "test-repo")
+    count = db.list_branches(project["id"]).size
+    db.close
+    count
   end
 end
